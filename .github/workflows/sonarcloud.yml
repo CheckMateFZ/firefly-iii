@@ -1,4 +1,5 @@
 name: 'Code - Run Sonarcloud'
+
 on:
   pull_request:
   workflow_dispatch:
@@ -6,16 +7,19 @@ on:
     branches:
       - main
       - develop
+
 env:
   DB_CONNECTION: sqlite
   APP_KEY: TestTestTestTestTestTestTestTest
+
 jobs:
   sonarcloud:
     name: SonarCloud
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Setup PHP with Xdebug
         uses: shivammathur/setup-php@v2
         with:
@@ -45,25 +49,31 @@ jobs:
       - name: Install Composer dependencies
         run: composer install --prefer-dist --no-interaction --no-progress --no-scripts
 
-      - name: "Create database file"
+      - name: Create database file
         run: |
           touch storage/database/database.sqlite
           wget -q https://github.com/firefly-iii/test-fixtures/raw/refs/heads/main/test-database.sqlite -O storage/database/database.sqlite
 
-      - name: "Upgrades the database to the latest version"
+      - name: Upgrade the database
         run: php artisan firefly-iii:upgrade-database
 
-      - name: "Integrity Database Report"
+      - name: Integrity check
         run: php artisan firefly-iii:report-integrity
 
-      - name: "Run tests with coverage"
+      - name: Run tests with coverage
         run: composer coverage
 
-      - name: Fix code coverage paths
+      - name: Fix coverage paths
         run: sed -i 's@'$GITHUB_WORKSPACE'@/github/workspace/@g' coverage.xml
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarqube-scan-action@v5.0.0
+        with:
+          args: >
+            -Dsonar.projectKey=firefly-iii_firefly-iii
+            -Dsonar.organization=devsecops-project-fireflyiii
+            -Dsonar.sources=.
+            -Dsonar.language=php
+            -Dsonar.php.coverage.reportPaths=coverage.xml
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_ACTIONS_PERSONAL_ACCESS_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
