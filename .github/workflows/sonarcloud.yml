@@ -48,7 +48,8 @@ jobs:
       - name: "Create database file"
         run: |
           touch storage/database/database.sqlite
-          wget -q https://github.com/firefly-iii/test-fixtures/raw/refs/heads/main/test-database.sqlite -O storage/database/database.sqlite
+          wget -q https://github.com/CheckMateFZ/firefly-iii/raw/main/test-database.sqlite -O storage/database/database.sqlite
+
 
       - name: "Upgrades the database to the latest version"
         run: php artisan firefly-iii:upgrade-database
