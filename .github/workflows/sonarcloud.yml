@@ -1,4 +1,5 @@
 name: 'Code - Run Sonarcloud'
+
 on:
   pull_request:
   workflow_dispatch:
@@ -6,64 +7,57 @@ on:
     branches:
       - main
       - develop
+
 env:
   DB_CONNECTION: sqlite
   APP_KEY: TestTestTestTestTestTestTestTest
+
 jobs:
   sonarcloud:
     name: SonarCloud
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
+
       - name: Setup PHP with Xdebug
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
           coverage: xdebug
-          extensions: >-
-            bcmath
-            curl
-            fileinfo
-            iconv
-            intl
-            json
-            sqlite3
-            mbstring
-            openssl
-            pdo
-            session
-            simplexml
-            sodium
-            tokenizer
-            xml
-            xmlwriter
+          extensions: mbstring, pdo, sqlite3
 
-      - name: Copy standard configuration
+      - name: Copy testing config
         run: cp .env.testing .env
 
-      - name: Install Composer dependencies
+      - name: Install PHP dependencies
         run: composer install --prefer-dist --no-interaction --no-progress --no-scripts
 
-      - name: "Create database file"
+      - name: Download SQLite test database
         run: |
-          touch storage/database/database.sqlite
-          wget -q https://github.com/firefly-iii/test-fixtures/raw/refs/heads/main/test-database.sqlite -O storage/database/database.sqlite
+          mkdir -p storage/database
+          wget -q https://github.com/CheckMateFZ/firefly-iii/raw/main/test-database.sqlite -O storage/database/database.sqlite
 
-      - name: "Upgrades the database to the latest version"
+      - name: Run Firefly DB upgrade
         run: php artisan firefly-iii:upgrade-database
 
-      - name: "Integrity Database Report"
+      - name: Run integrity check
         run: php artisan firefly-iii:report-integrity
 
-      - name: "Run tests with coverage"
+      - name: Run test suite with coverage
         run: composer coverage
 
-      - name: Fix code coverage paths
+      - name: Fix coverage file paths
         run: sed -i 's@'$GITHUB_WORKSPACE'@/github/workspace/@g' coverage.xml
 
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+      - name: Run SonarCloud Scan (official)
+        uses: SonarSource/sonarqube-scan-action@v5.0.0
+        with:
+          args: >
+            -Dsonar.projectKey=CheckMateFZ_firefly-iii
+            -Dsonar.organization=devsecops-project-fireflyiii
+            -Dsonar.sources=.
+            -Dsonar.language=php
+            -Dsonar.php.coverage.reportPaths=coverage.xml
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_ACTIONS_PERSONAL_ACCESS_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
