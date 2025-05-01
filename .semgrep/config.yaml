@@ -1,16 +1,12 @@
 rules:
-  - id: detect-hardcoded-api-key
-    patterns:
-      - pattern: $VAR = "sk_test$REST"
-      - metavariable-pattern:
-          metavariable: $VAR
-          pattern: $KEY
-    message: "Hardcoded API key detected"
-    languages: [php]
+  - id: detect-hardcoded-stripe-key
+    pattern: $KEY = 'sk_test_$REST'
+    message: "🔐 Hardcoded Stripe test key detected"
     severity: ERROR
+    languages: [php]
 
-  - id: detect-dynamic-sql-query
-    pattern: DB::select("SELECT $REST")
-    message: "Raw SQL query detected — use parameterized queries"
-    languages: [php]
+  - id: detect-sqli-db-select
+    pattern: DB::select("SELECT * FROM users WHERE name = '$user'")
+    message: "💉 Raw SQL query detected — potential SQL injection"
     severity: ERROR
+    languages: [php]
