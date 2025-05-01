@@ -1,12 +1,16 @@
 rules:
-  - id: hardcoded-secret-detection
-    pattern: $SECRET = "$VALUE"
-    message: "Potential hardcoded secret detected"
+  - id: detect-hardcoded-api-key
+    patterns:
+      - pattern: $VAR = "sk_test$REST"
+      - metavariable-pattern:
+          metavariable: $VAR
+          pattern: $KEY
+    message: "Hardcoded API key detected"
     languages: [php]
-    severity: WARNING
+    severity: ERROR
 
-  - id: raw-sql-detection
-    pattern: DB::select("SELECT * FROM users WHERE name = '$USER'")
-    message: "Raw SQL detected — use parameterized queries to prevent SQL injection"
+  - id: detect-dynamic-sql-query
+    pattern: DB::select("SELECT $REST")
+    message: "Raw SQL query detected — use parameterized queries"
     languages: [php]
     severity: ERROR
