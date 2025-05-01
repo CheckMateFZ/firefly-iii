@@ -25,4 +25,4 @@ jobs:
     if: (github.actor != 'dependabot[bot]')
     steps:
       - uses: actions/checkout@v4
-      - run: semgrep --config=p/secrets --config=p/sql-injection --include bad_secret.php unsafe_query.php
+      - run: semgrep --config=p/secrets --config=p/sql-injection --include bad_secret.php unsafe_query.php --metrics=off
