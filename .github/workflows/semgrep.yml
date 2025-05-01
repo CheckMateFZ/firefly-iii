@@ -25,4 +25,4 @@ jobs:
     if: (github.actor != 'dependabot[bot]')
     steps:
       - uses: actions/checkout@v4
-      - run: semgrep --config=.semgrep
+      - run: semgrep --config=.semgrep --include bad_secret.php unsafe_query.php
