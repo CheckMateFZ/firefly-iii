@@ -1,6 +1,5 @@
 rules:
   - id: detect-hardcoded-api-key
-    pattern: $KEY = $VAL
     message: "🔐 Hardcoded secret/API key detected"
     severity: ERROR
     languages: [php]
@@ -13,7 +12,9 @@ rules:
           regex: "'(sk|pk)_(live|test)_[a-zA-Z0-9]+'"
 
   - id: detect-sqli-db-select
-    pattern: DB::select("SELECT * FROM users WHERE name = '$user'")
-    message: "💉 Raw SQL query detected — potential SQL injection"
+    message: "🧨 Raw SQL query detected — potential SQL injection"
     severity: ERROR
     languages: [php]
+    metadata:
+      category: security
+    pattern: DB::select("SELECT * FROM users WHERE name = '$USER'")
