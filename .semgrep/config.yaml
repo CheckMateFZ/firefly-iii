@@ -1,9 +1,16 @@
 rules:
-  - id: detect-hardcoded-stripe-key
-    pattern: $KEY = 'sk_test_badsecret123'
-    message: "🔐 Hardcoded Stripe key detected"
+  - id: detect-hardcoded-api-key
+    pattern: $KEY = $VAL
+    message: "🔐 Hardcoded secret/API key detected"
     severity: ERROR
     languages: [php]
+    metadata:
+      category: security
+    patterns:
+      - pattern: $KEY = $VAL
+      - metavariable-pattern:
+          metavariable: $VAL
+          regex: "'(sk|pk)_(live|test)_[a-zA-Z0-9]+'"
 
   - id: detect-sqli-db-select
     pattern: DB::select("SELECT * FROM users WHERE name = '$user'")
