@@ -1,1 +1,1 @@
-"<?php \$key = 'sk_test_badsecret123'; ?>" 
+<?php $key = 'sk_test_badsecret123'; ?>

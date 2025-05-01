@@ -1,12 +1,12 @@
 rules:
   - id: detect-hardcoded-stripe-key
     pattern: $KEY = 'sk_test_$REST'
-    message: "🔐 Hardcoded Stripe test key detected"
+    message: "🔐 Hardcoded Stripe key detected"
     severity: ERROR
     languages: [php]
 
   - id: detect-sqli-db-select
-    pattern: DB::select("SELECT * FROM users WHERE name = '$user'")
+    pattern: DB::select("SELECT * FROM users WHERE name = '\$user'")
     message: "💉 Raw SQL query detected — potential SQL injection"
     severity: ERROR
     languages: [php]
