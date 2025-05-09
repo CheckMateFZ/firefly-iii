@@ -1,0 +1,8 @@
+import "tfplan/v2" as tfplan
+
+main = rule {
+  all tfplan.resource_changes as _, rc {
+    rc.type is "aws_db_instance" => 
+      rc.applied.storage_encrypted is true
+  }
+}

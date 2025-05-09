@@ -1,0 +1,45 @@
+name: Sentinel Policy Check
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - release
+
+jobs:
+  sentinel-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.7
+
+      - name: Install Sentinel CLI
+        run: |
+          curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+          sudo apt update && sudo apt install sentinel -y
+
+      - name: Terraform Init
+        working-directory: .devsecops-tests/iac
+        run: terraform init
+
+      - name: Terraform Plan (to JSON)
+        working-directory: .devsecops-tests/iac
+        run: terraform plan -out=tfplan.binary && terraform show -json tfplan.binary > tfplan.json
+
+      - name: Run Sentinel Policies
+        working-directory: .devsecops-tests/sentinel
+        run: |
+          sentinel apply -trace -config=sentinel.hcl -mock tfplan=../iac/tfplan.json
+
+      - name: Upload Sentinel Results (Optional)
+        uses: actions/upload-artifact@v4
+        with:
+          name: sentinel-trace
+          path: .devsecops-tests/sentinel/*.trace.json

@@ -1,0 +1,17 @@
+import "tfplan/v2" as tfplan
+
+deny_open_sg = func(resource) {
+  ingress = resource.applied.ingress else []
+  for ingress_rule in ingress {
+    if ingress_rule.cidr_blocks else [] contains "0.0.0.0/0" {
+      return true
+    }
+  }
+  return false
+}
+
+main = rule {
+  all tfplan.resource_changes as _, rc {
+    rc.type is "aws_security_group" and deny_open_sg(rc)
+  } is false
+}
