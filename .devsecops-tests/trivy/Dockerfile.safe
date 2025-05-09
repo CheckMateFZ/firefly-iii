@@ -1,4 +1,2 @@
-FROM debian:bullseye-slim
-RUN adduser --disabled-password --gecos '' appuser
-USER appuser
+FROM ubuntu:16.04
 CMD ["echo", "Secure Image "]

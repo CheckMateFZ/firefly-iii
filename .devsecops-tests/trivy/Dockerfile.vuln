@@ -1,2 +1,4 @@
-FROM ubuntu:16.04
-CMD ["echo", "Insecure Image "]
+FROM debian:bullseye-slim
+RUN adduser --disabled-password --gecos '' appuser
+USER appuser
+CMD ["echo", "Vuln Image"]
