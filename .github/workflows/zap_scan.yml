@@ -1,4 +1,4 @@
-name: DAST - OWASP ZAP Baseline Scan
+name: DAST - OWASP ZAP
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
       - release
 
 jobs:
-  zap_scan:
+  zap-scan:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,11 +18,13 @@ jobs:
         uses: zaproxy/action-baseline@v0.11.0
         with:
           target: "https://demo.firefly-iii.org"
-          cmd_options: "-t 60"
-          allow_issue_writing: false
+          cmd_options: "-a -m 2 -r zap_report.html -w zap_report.md -J zap_report.json"
 
       - name: Upload ZAP Report
         uses: actions/upload-artifact@v4
         with:
           name: zap-report
-          path: report_html.html
+          path: |
+            zap_report.html
+            zap_report.md
+            zap_report.json
