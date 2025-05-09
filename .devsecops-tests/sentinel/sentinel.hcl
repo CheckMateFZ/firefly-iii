@@ -1,5 +1,3 @@
-import "tfplan"
-
-mock "tfplan" {
+import "tfplan" "mock" {
   mock_file = "../iac/tfplan.json"
 }
