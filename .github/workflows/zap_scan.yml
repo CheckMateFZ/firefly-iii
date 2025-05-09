@@ -17,7 +17,11 @@ jobs:
       - name: Install OWASP ZAP
         run: |
           sudo apt-get update
-          sudo apt-get install zaproxy
+          sudo apt-get install -y wget
+          sudo apt-get install -y openjdk-11-jre # Required for ZAP
+          wget -q -O - https://dev.azuracast.com/downloads/owasp/zap/apt/owasp-zap.list | sudo tee /etc/apt/sources.list.d/owasp-zap.list
+          sudo apt-get update
+          sudo apt-get install -y owasp-zap
 
       - name: Start ZAP and run scan
         run: |
@@ -26,7 +30,7 @@ jobs:
           ZAP_API_KEY: ${{ secrets.ZAP_API_KEY }}
 
       - name: Upload ZAP Report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: zap-report
           path: zap_report.html
