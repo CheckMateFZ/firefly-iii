@@ -34,7 +34,7 @@ jobs:
       - name: Apply Sentinel Policy
         working-directory: .devsecops-tests/sentinel
         run: |
-          sentinel apply -trace -config=sentinel.hcl policies/enforce_encryption.sentinel
+          sentinel apply -trace -config=sentinel/sentinel.hcl -mock tfplan=.devsecops-tests/iac/tfplan.json sentinel/policies/enforce_encryption.sentinel
 
       - name: Upload Sentinel Trace (Optional)
         uses: actions/upload-artifact@v4
