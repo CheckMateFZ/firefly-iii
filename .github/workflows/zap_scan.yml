@@ -17,7 +17,6 @@ jobs:
       - name: Install OWASP ZAP
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget
           sudo apt-get install -y openjdk-11-jre # Required for ZAP
           wget -q -O - https://dev.azuracast.com/downloads/owasp/zap/apt/owasp-zap.list | sudo tee /etc/apt/sources.list.d/owasp-zap.list
           sudo apt-get update
@@ -27,7 +26,7 @@ jobs:
         run: |
           zap-baseline.py -t https://demo.firefly-iii.org -r zap_report.html
         env:
-          ZAP_API_KEY: ${{ secrets.ZAP_API_KEY }}
+          ZAP_API_KEY: ${{ secrets.ZAP_API_KEY }} # If you have an API key for ZAP
 
       - name: Upload ZAP Report
         uses: actions/upload-artifact@v2
