@@ -2,9 +2,7 @@ name: Sentinel Policy Check
 
 on:
   pull_request:
-    branches:
-      - develop
-      - release
+    branches: [develop, release]
 
 jobs:
   sentinel-check:
@@ -29,16 +27,16 @@ jobs:
         working-directory: .devsecops-tests/iac
         run: terraform init
 
-      - name: Terraform Plan (to JSON)
+      - name: Terraform Plan to JSON
         working-directory: .devsecops-tests/iac
         run: terraform plan -out=tfplan.binary && terraform show -json tfplan.binary > tfplan.json
 
-      - name: Run Sentinel Policies
+      - name: Apply Sentinel Policy
         working-directory: .devsecops-tests/sentinel
         run: |
-          sentinel apply -trace -config=sentinel.hcl ../sentinel/policies/enforce_encryption.sentinel
+          sentinel apply -trace -config=sentinel.hcl policies/enforce_encryption.sentinel
 
-      - name: Upload Sentinel Results (Optional)
+      - name: Upload Sentinel Trace (Optional)
         uses: actions/upload-artifact@v4
         with:
           name: sentinel-trace

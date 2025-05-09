@@ -1,3 +1,3 @@
-import "tfplan" "mock" {
-  mock_file = "../iac/tfplan.json"
+mock "tfplan" {
+  data = file("../iac/tfplan.json")
 }
