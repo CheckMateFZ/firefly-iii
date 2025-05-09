@@ -24,7 +24,7 @@ jobs:
           wapiti -u https://demo.firefly-iii.org -o wapiti_report.html
 
       - name: Upload Wapiti Report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: wapiti-report
           path: wapiti_report.html
