@@ -1,0 +1,29 @@
+name: IaC Security - Checkov Scan
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - release
+
+jobs:
+  checkov-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Install Checkov
+        run: |
+          pip install checkov
+
+      - name: Run Checkov on Terraform Files
+        run: |
+          checkov -d .devsecops-tests/iac/ --output json --soft-fail > checkov-report.json
+
+      - name: Upload Checkov Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkov-report
+          path: checkov-report.json
