@@ -6,7 +6,7 @@
     },
     "test": {
       "main": true,
-      "policy": "enforce_encryption.sentinel"
+      "policy": "policies/enforce_encryption.sentinel"
     }
   }
   
