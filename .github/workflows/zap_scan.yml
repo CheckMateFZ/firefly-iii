@@ -1,4 +1,4 @@
-name: DAST - OWASP ZAP
+name: DAST - OWASP ZAP (Docker)
 
 on:
   pull_request:
@@ -14,22 +14,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Install OWASP ZAP
+      - name: Run ZAP Baseline Scan
         run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jre # Required for ZAP
-          wget -q -O - https://dev.azuracast.com/downloads/owasp/zap/apt/owasp-zap.list | sudo tee /etc/apt/sources.list.d/owasp-zap.list
-          sudo apt-get update
-          sudo apt-get install -y owasp-zap
-
-      - name: Start ZAP and run scan
-        run: |
-          zap-baseline.py -t https://demo.firefly-iii.org -r zap_report.html
-        env:
-          ZAP_API_KEY: ${{ secrets.ZAP_API_KEY }} # If you have an API key for ZAP
+          docker run -v $(pwd):/zap/wrk/:rw ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
+            -t https://demo.firefly-iii.org \
+            -g gen.conf \
+            -r zap_report.html \
+            -J zap_report.json \
+            -x zap_report.xml
 
       - name: Upload ZAP Report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: zap-report
           path: zap_report.html
