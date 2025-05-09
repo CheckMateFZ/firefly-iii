@@ -33,8 +33,7 @@ jobs:
 
       - name: Apply Sentinel Policy
         working-directory: .devsecops-tests/sentinel
-        run: |
-          sentinel test -run mocks/test-1.json
+        run: sentinel test -run mocks/test-1.json policies/enforce_encryption.sentinel
 
       - name: Upload Sentinel Trace (Optional)
         uses: actions/upload-artifact@v4
