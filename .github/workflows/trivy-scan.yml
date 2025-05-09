@@ -28,11 +28,11 @@ jobs:
 
       - name: Scan Safe Image with Trivy
         run: |
-          trivy image --severity HIGH,CRITICAL --format table --output safe-report.txt firefly-safe
+          trivy image --severity HIGH,CRITICAL --format table --output safe-report.txt firefly-vuln
 
       - name: Scan Vulnerable Image with Trivy
         run: |
-          trivy image --severity HIGH,CRITICAL --exit-code 1 --format table --output vuln-report.txt firefly-vuln
+          trivy image --severity HIGH,CRITICAL --exit-code 1 --format table --output vuln-report.txt firefly-safe
 
       - name: Upload Trivy Reports
         uses: actions/upload-artifact@v4
