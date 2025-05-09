@@ -1,0 +1,12 @@
+{
+    "mock": {
+      "tfplan": {
+        "mock_file": "../../iac/tfplan.json"
+      }
+    },
+    "test": {
+      "main": true,
+      "policy": "enforce_encryption.sentinel"
+    }
+  }
+  
