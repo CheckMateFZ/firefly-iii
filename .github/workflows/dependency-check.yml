@@ -9,7 +9,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3.5.3
 
       - name: Install OWASP Dependency-Check
         run: |
@@ -22,7 +23,7 @@ jobs:
           ./dc/dependency-check/bin/dependency-check.sh --project "firefly" --scan . --format "HTML" --out owasp-report
 
       - name: Upload Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: owasp-report
           path: owasp-report/dependency-check-report.html
