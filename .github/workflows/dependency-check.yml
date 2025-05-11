@@ -1,0 +1,28 @@
+name: OWASP Dependency Check
+
+on:
+  push:
+    branches: [main, develop, release]
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install OWASP Dependency-Check
+        run: |
+          curl -L -o dependency-check.zip https://github.com/jeremylong/DependencyCheck/releases/download/v8.4.0/dependency-check-8.4.0-release.zip
+          unzip dependency-check.zip -d dc
+          chmod +x dc/dependency-check/bin/dependency-check.sh
+
+      - name: Run Scan
+        run: |
+          ./dc/dependency-check/bin/dependency-check.sh --project "firefly" --scan . --format "HTML" --out owasp-report
+
+      - name: Upload Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: owasp-report
+          path: owasp-report/dependency-check-report.html

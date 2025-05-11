@@ -1,0 +1,28 @@
+name: Blue-Green Deployment
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "k8s/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG_DATA }}" | base64 --decode > ~/.kube/config
+
+      - name: Deploy Blue
+        run: |
+          kubectl apply -f k8s/blue-deployment.yaml
+          kubectl apply -f k8s/service.yaml
+
+      - name: Deploy Green (standby)
+        run: kubectl apply -f k8s/green-deployment.yaml
