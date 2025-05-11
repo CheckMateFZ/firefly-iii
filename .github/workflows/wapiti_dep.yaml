@@ -1,0 +1,28 @@
+name: Wapiti DAST Scan
+
+on:
+  pull_request:
+    branches: [main, develop, release]
+
+jobs:
+  wapiti-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+
+      - name: Install Wapiti
+        run: pip install wapiti3
+
+      - name: Run Wapiti Scan on Firefly Demo
+        run: |
+          wapiti -u https://demo.firefly-iii.org/ -f html -o wapiti-report.html
+
+      - name: Upload Wapiti Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: wapiti-report
+          path: wapiti-report.html
