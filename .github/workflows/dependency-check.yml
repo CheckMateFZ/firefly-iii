@@ -18,12 +18,14 @@ jobs:
           unzip dependency-check.zip -d dc
           chmod +x dc/dependency-check/bin/dependency-check.sh
 
-      - name: Run Scan
+      - name: Run Dependency Check Scan
         run: |
           ./dc/dependency-check/bin/dependency-check.sh --project "firefly" --scan . --format "HTML" --out owasp-report
 
-      - name: Upload Report
-        uses: actions/upload-artifact@v3.1.3
+      - name: Upload OWASP Report
+        uses: actions/upload-artifact@v4
         with:
-          name: owasp-report
+          name: owasp-dependency-report
           path: owasp-report/dependency-check-report.html
+          retention-days: 7
+          compression-level: 6
